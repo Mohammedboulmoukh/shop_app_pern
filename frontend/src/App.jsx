@@ -1,4 +1,5 @@
 
+import { Toaster } from "react-hot-toast";
 //components
 import NavBar from "./components/NavBar";
 // import the pages
@@ -21,6 +22,8 @@ function App() {
         <Route path="/product/:id" element={<ProductPage/>} />
         <Route path="/AboutUs" element={<AboutUs/>} />
       </Routes>
+
+      <Toaster/>
 
 
     </div>

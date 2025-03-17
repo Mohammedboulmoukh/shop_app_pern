@@ -1,10 +1,11 @@
-
-
 import { Link } from "react-router-dom";
-import EditIcon from 'lucide-react';
+import { EditIcon, Trash } from "lucide-react";
+import { useProductStore } from "../store/useProductStore";
 
 
 function ProductCard({ product }) {
+
+  const { deleteProduct } = useProductStore();
   return (
     <div className="card bg-base-100 shadow-xl hover:shadow-2xl trasition-shadow duration-300">
       {/* The product image. */}
@@ -24,15 +25,16 @@ function ProductCard({ product }) {
           ${Number(product.price).toFixed(2)}
         </p>
         <div className="card-actions justify-end mt-4">
-          <Link to = {`/product/${product.id}`} className = "btn btn-sm btn-info btn-outline">
-          
-          <EditIcon className = "size-5"/>
+          <Link
+            to={`/product/${product.id}`}
+            className="btn btn-sm btn-info btn-outline"
+          >
+            <EditIcon className="size-5" />
           </Link>
-          <button>
-            <Trasch2Icon className = "size-5"/>
-        
+          <button className="btn btn-sm btn-error btn-outline" onClick={() => deleteProduct(product.id)}>
+            <Trash className="size-5" />
           </button>
-                
+          
         </div>
       </div>
     </div>

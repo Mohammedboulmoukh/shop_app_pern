@@ -1,9 +1,10 @@
 import { create } from "zustand";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const BASE_URL = "http://localhost:3000";
 
-export const useProductStore = create((set, get) => ({
+export const useProductStore = create((set) => ({
   //products state
   products: [],
   loading: false,
@@ -15,8 +16,25 @@ export const useProductStore = create((set, get) => ({
       const response = await axios.get(`${BASE_URL}/api/products`);
       set({ products: response.data.data, error: null });
     } catch (err) {
-      if (err.status == 429) set({ error: "Too many requests" });
+      if (err.response.status == 429) set({ error: "Too many requests" });
       else set({ error: "Something went wrong" });
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  deleteProduct: async (id) => {
+    set({ loading: true });
+    try {
+      await axios.delete(`${BASE_URL}/api/products/${id}`);
+      set(prev => ({
+        products: prev.products.filter(product => product.id !== id),
+        error: null
+      }))
+      toast.success("Product deleted successfully");
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
     } finally {
       set({ loading: false });
     }

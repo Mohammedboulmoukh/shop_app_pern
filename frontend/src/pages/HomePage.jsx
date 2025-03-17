@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { useProductStore } from "../store/useProductStore";
 import { PlusCircleIcon, RefreshCwIcon } from "lucide-react";
-import ProductCard from "../components/ProductCard";
+import  ProductCard  from "../components/ProductCard";
+
 
 function HomePage() {
   const { products, loading, error, fetchProducts } = useProductStore();
@@ -23,18 +24,22 @@ function HomePage() {
       </div>
       {error && <div className="alert alert-error">{error}</div>}
 
+      {products.length === 0 && !loading && (
+        <div className="flex justify-center items-center h-64">
+          <p className="text-2xl font-semibold">No products found</p>
+        </div>)}
+
       {loading ? (
         <div className="flex justify-center items-center h-64">
-       <div className="loading loading-spinner loading-lg"/>
-      </div>
+          <div className="loading loading-spinner loading-lg" />
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {products.map(product => (
-            <ProductCard key={product.id} product={product}/>
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       )}
-      
     </main>
   );
 }

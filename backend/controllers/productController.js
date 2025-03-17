@@ -2,10 +2,10 @@ import { sql } from "../config/db.js";
 
 // get all products
 
-export const getProducts = (req, res) => {
+export const getProducts = async (req, res) => {
   try {
-    const products = sql`SELECT * FROM products
-        order by createdat DESC`;
+    const products = await sql`SELECT * FROM products
+    ORDER BY createdAt DESC`;
     console.log("data fetched successfully");
     res.status(200).json({ success: true, data: products });
   } catch (err) {
