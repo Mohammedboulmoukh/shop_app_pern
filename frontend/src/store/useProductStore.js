@@ -20,6 +20,18 @@ export const useProductStore = create((set, get) => ({
 
   setFormDATA: (data) => set((state) => ({ formData: { ...state.formData, ...data } })),
   resetForm: () => set({ formData: { name: "", price: "", image: "" } }),
+  fetchProduct: async (id) => {
+    set({ loading: true });
+    try {
+      const response = await axios.get(`${BASE_URL}/api/products/${id}`);
+      set({ currentProduct: response.data.data, formData: response.data.data, error: null });
+    } catch (err) {
+      console.log(err);
+      set({ error: "Something went wrong", currentProduct: null });
+    } finally {
+      set({ loading: false });
+    }
+},
 
   addProduct: async (e) => {
     e.preventDefault();
@@ -70,24 +82,10 @@ export const useProductStore = create((set, get) => ({
     }
   },
 
-
-  fetchProduct: async (id) => {
-      set({ loading: true });
-      try {
-        const response = await axios.get(`${BASE_URL}/api/products/${id}`);
-        set({ currentProduct: response.data.data, formData: response.data.data, error: null });
-
-      } catch (err) {
-        console.log(err);
-        set({ error: "Something went wrong", correntProduct: null });
-      } finally {
-        set({ loading: false });
-      }
-  },
   updateProduct :async (id) => {
     set({ loading: true });
     try {
-      const { formData } = get();
+      const { formData } = get().formData;
       const response = await axios.put(`${BASE_URL}/api/products/${id}`, formData);
       set({ currentProduct: response.data.data});
       toast.success("Product updated successfully");

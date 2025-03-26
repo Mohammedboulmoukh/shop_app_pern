@@ -1,16 +1,18 @@
 import { useProductStore } from "../store/useProductStore";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { ArrowLeftIcon } from "lucide-react";
+import { ArrowLeftIcon, TrashIcon, SaveIcon } from "lucide-react";
+
+
 
 function ProductPage() {
   const {
     currentProduct,
     loading,
     error,
-    fetchProduct,
     updateProduct,
     formData,
+    fetchProduct,
     setFormDATA,
     deleteProduct,
   } = useProductStore();
@@ -18,11 +20,20 @@ function ProductPage() {
   const navigate = useNavigate();
   const { id } = useParams();
 
+  
+
   useEffect(() => {
     fetchProduct(id);
-  }, [fetchProduct, id]);
+  },
+   [fetchProduct, id]);
+  
 
-  if (loading) {
+  const handleDelete = async () => {
+    await deleteProduct(id);
+    navigate("/");
+  };
+
+  if (loading || !currentProduct) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="loading loading-spinner text-primary" />
@@ -49,8 +60,8 @@ function ProductPage() {
         {/* product image */}
         <div className="rounded-lg overflow-hidden shadow-lg bg-base-100">
           <img
-            src="https://i.pinimg.com/736x/05/89/8c/05898c23e071226120860524b22dcb33.jpg"
-            alt="Product Image"
+            src={currentProduct.image || ""}
+            alt={currentProduct.name || "product name"}
             className="w-full h-full object-cover"
           />
         </div>
@@ -71,10 +82,12 @@ function ProductPage() {
               </label>
               <input
                 type="text"
-                placeholder="Product name"
+                placeholder={currentProduct.name}
                 className="input input-bordered w-full"
                 value={formData.name}
-                onChange={(e) => setFormDATA({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormDATA({ ...formData, name: e.target.value })
+                }
               />
               {/* product price input */}
               <label className="label">
@@ -82,32 +95,56 @@ function ProductPage() {
               </label>
               <input
                 type="number"
-                placeholder="0.00"
+                placeholder={currentProduct.price}
                 className="input input-bordered w-full"
                 value={formData.price}
-                onChange={(e) => setFormDATA({ ...formData, price: e.target.value })}
+                onChange={(e) =>
+                  setFormDATA({ ...formData, price: e.target.value })
+                }
               />
               {/* product image input */}
               <label className="label">
-                <span className="label-text font-bold">Product image</span>
+                <span className="label-text font-bold">Product URL image</span>
               </label>
               <input
                 type="text"
-                placeholder="https://example.com/image.jpg"
+                placeholder={currentProduct.image}
                 className="input input-bordered w-full"
                 value={formData.image}
-                onChange={(e) => setFormDATA({ ...formData, image: e.target.value })}
+                onChange={(e) =>
+                  setFormDATA({ ...formData, image: e.target.value })
+                }
               />
               {/* form actions */}
               <div className="card-actions justify-end">
-                <button type="submit" className="btn btn-success w-full">
-                  Save changes
-                </button>
                 <button
-                  className="btn btn-error w-full"
-                  onClick={() => deleteProduct(currentProduct.id)}
+                  type="button"
+                  className="btn btn-error rounded-full"
+                  onClick={handleDelete}
                 >
-                  Delete
+                  <TrashIcon className="size-5 mr-2" />
+                  Delete Product
+                </button>
+
+                <button
+                  type="submit"
+                  className="btn btn-success rounded-full"
+                  disabled={
+                    !formData.name ||
+                    !formData.price ||
+                    !formData.image ||
+                    loading
+                  }
+                  onClick={() => updateProduct(id)}
+                >
+                  {loading ? (
+                    <span className="loading loading-spinner"></span>
+                  ) : (
+                    <>
+                      <SaveIcon className="size-5 mr-2" />
+                      Save Changes
+                    </>
+                  )}
                 </button>
               </div>
             </form>
